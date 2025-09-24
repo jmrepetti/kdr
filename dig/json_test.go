@@ -39,10 +39,10 @@ func TestJsonDiggerFailToConvert(t *testing.T) {
 	assert.NoError(t, err)
 	_, err = d.String("data", "age")
 	assert.Error(t, err)
-	assert.ErrorContains(t, err, "failed to convert 30 of type float64 to string at 'age'")
+	assert.ErrorContains(t, err, "can't convert float64 to string in $.data.age")
 	_, err = d.String("data", "address", "ext")
 	assert.Error(t, err)
-	assert.ErrorContains(t, err, "failed to convert <nil> of type <nil> to string at 'ext'")
+	assert.ErrorContains(t, err, "can't convert <nil> to string in $.data.address.ext")
 }
 
 func TestJsonDiggerEmptyStringIsString(t *testing.T) {

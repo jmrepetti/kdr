@@ -2,6 +2,7 @@ package dig
 
 import (
 	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/jmrepetti/kdr/cherry"
@@ -15,7 +16,8 @@ var jsonBody = []byte(`{"data":{"id": 1,
 	"age": 30,
 	"nickname": "",
 	"address": {
-		"street": "123 Main St", "ext": null,
+		"street": "123 Main St",
+		"ext": null,
 		"city": "Madrid",
 		"zip": "28013",
 		"country": "Spain"}
@@ -47,10 +49,11 @@ func TestDigFailToConvert(t *testing.T) {
 	data := data()
 	_, err := Dig[string](data, "data", "age")
 	assert.Error(t, err)
-	assert.ErrorContains(t, err, "failed to convert 30 of type float64 to string at 'age'")
+	assert.ErrorContains(t, err, "can't convert float64 to string in $.data.age")
 	_, err = Dig[string](data, "data", "address", "ext")
 	assert.Error(t, err)
-	assert.ErrorContains(t, err, "failed to convert <nil> of type <nil> to string at 'ext'")
+	fmt.Println(err)
+	assert.ErrorContains(t, err, "can't convert <nil> to string in $.data.address.ext")
 }
 
 func TestDigEmptyStringIsString(t *testing.T) {
@@ -64,4 +67,7 @@ func TestDigNull(t *testing.T) {
 	_, err := DigNil(data, "data", "address", "zip")
 	assert.Error(t, err)
 	assert.ErrorContains(t, err, "expected null value at [data address zip]")
+	v, err := DigNil(data, "data", "address", "ext")
+	assert.NoError(t, err)
+	assert.Equal(t, nil, v)
 }
